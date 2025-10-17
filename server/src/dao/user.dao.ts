@@ -1,8 +1,9 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, Role } from "@prisma/client";
+
 const prisma = new PrismaClient();
 
 export const UserDAO = {
-  create: (data: { name: string; email: string; password: string; role?: string }) =>
+  create: (data: { name: string; email: string; password: string; role?: Role }) =>
     prisma.user.create({ data }),
 
   getById: (id: string) =>
@@ -11,7 +12,7 @@ export const UserDAO = {
   getByEmail: (email: string) =>
     prisma.user.findUnique({ where: { email } }),
 
-  update: (id: string, data: Partial<{ name: string; email: string; password: string; role: string }>) =>
+  update: (id: string, data: Partial<{ name: string; email: string; password: string; role: Role }>) =>
     prisma.user.update({ where: { id }, data }),
 
   delete: (id: string) =>
