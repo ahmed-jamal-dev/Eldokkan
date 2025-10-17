@@ -1,14 +1,78 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
 
 generator client {
   provider = "prisma-client-js"
 }
 
-datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+model User {
+  id        String    @id @default(uuid())
+  name      String
+  email     String    @unique
+  password  String
+  role      Role      @default(CUSTOMER)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  products  Product[] @relation("ProductToUser")
+  orders    Order[]   @relation("OrderToUser")
+}
+
+enum Role {
+  ADMIN
+  CUSTOMER
+}
+
+model Category {
+  id        String    @id @default(uuid())
+  name      String
+  slug      String    @unique
+  createdAt DateTime  @default(now())
+  products  Product[] @relation("ProductToCategory")
+
+  @@index([slug])
+}
+
+model Product {
+  id          String     @id @default(uuid())
+  title       String
+  description String?
+  price       Float
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  category    Category?  @relation("ProductToCategory", fields: [categoryId], references: [id])
+  categoryId  String?
+  user        User       @relation("ProductToUser", fields: [userId], references: [id], onDelete: Cascade)
+  userId      String
+  orderItems  OrderItem[]
+}
+
+model Order {
+  id        String      @id @default(uuid())
+  user      User        @relation("OrderToUser", fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  total     Float
+  status    OrderStatus @default(PENDING)
+  address   String
+  createdAt DateTime    @default(now())
+  items     OrderItem[]
+}
+
+enum OrderStatus {
+  PENDING
+  PAID
+  SHIPPED
+  DELIVERED
+  CANCELED
+}
+
+model OrderItem {
+  id        String   @id @default(uuid())
+  order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  orderId   String
+  product   Product  @relation(fields: [productId], references: [id])
+  productId String
+  quantity  Int
+  unitPrice Float
 }
