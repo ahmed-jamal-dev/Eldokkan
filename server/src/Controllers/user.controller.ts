@@ -108,7 +108,7 @@ export const getUserById: ExpressHandler<getUserByIdRequest, getUserByIdResponse
     req,
     res
 ) => {
-    const id = typeof req.params === 'string' ? req.params : (req.params as any).id;
+    const id = req.body.id;
     try {
         const user = await prisma.user.findUnique({ where: { id } });
         if (user) res.json(user);
