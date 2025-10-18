@@ -1,37 +1,41 @@
 {
-  "name": "eldokkan",
-  "version": "1.0.0",
-  "main": "dist/server.js",
-  "scripts": {
-    "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
-    "build": "tsc",
-    "start": "node dist/server.js",
-    "prisma:generate": "prisma generate"
-  },
-  "_moduleAliases": {
-    "@": "dist",
-    "@handlers": "dist/handlers",
-    "@types": "dist/types",
-    "@datastore": "dist/datastore",
-    "@api": "dist/api"
-  },
-  "dependencies": {
-    "@prisma/client": "^5.22.0",
-    "bcryptjs": "^2.4.3",
-    "cors": "^2.8.5",
-    "dotenv": "^16.3.1",
-    "express": "^4.19.2",
-    "jsonwebtoken": "^9.0.2",
-    "module-alias": "^2.2.3"
-  },
-  "devDependencies": {
-    "@types/bcryptjs": "^2.4.6",
-    "@types/cors": "^2.8.19",
-    "@types/express": "^4.17.21",
-    "@types/jsonwebtoken": "^9.0.6",
-    "@types/node": "^20.0.0",
-    "prisma": "^5.22.0",
-    "ts-node-dev": "^2.0.0",
-    "typescript": "^5.3.3"
-  }
+    "name": "eldokkan",
+    "version": "1.0.0",
+    "main": "dist/server.js",
+    "scripts": {
+        "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
+        "build": "tsc",
+        "start": "node dist/server.js",
+        "prisma:generate": "prisma generate",
+        "lint": "prettier --write \"**/*.{js,jsx,json,md,ts}\" --config ./.prettierrc.json",
+        "format": "prettier --write \"**/*.{js,jsx,json,ts,tsx,css,md}\" --config ./.prettierrc.json",
+        "lint:fix": "prettier --write \"**/*.{js,jsx,json,ts,tsx,md}\" --config ./.prettierrc.json --loglevel warn"
+    },
+    "_moduleAliases": {
+        "@": "dist",
+        "@handlers": "dist/handlers",
+        "@types": "dist/types",
+        "@datastore": "dist/datastore",
+        "@api": "dist/api"
+    },
+    "dependencies": {
+        "@prisma/client": "^5.22.0",
+        "bcryptjs": "^2.4.3",
+        "cors": "^2.8.5",
+        "dotenv": "^16.3.1",
+        "express": "^4.19.2",
+        "jsonwebtoken": "^9.0.2",
+        "module-alias": "^2.2.3"
+    },
+    "devDependencies": {
+        "@types/bcryptjs": "^2.4.6",
+        "@types/cors": "^2.8.19",
+        "@types/express": "^4.17.21",
+        "@types/jsonwebtoken": "^9.0.6",
+        "@types/node": "^20.0.0",
+        "prettier": "^3.6.2",
+        "prisma": "^5.22.0",
+        "ts-node-dev": "^2.0.0",
+        "typescript": "^5.3.3"
+    }
 }

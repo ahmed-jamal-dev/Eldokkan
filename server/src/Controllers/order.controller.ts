@@ -1,146 +1,118 @@
-import { RequestHandler } from "express";
-import { OrderDAO } from "../dao/order.dao";
-import { ExpressHandler, WithMessage } from "@/types";
-import { CreateOrderResponse,CreateOrderRequest, GetOrdersRequest, GetOrdersResponse, GetOrderByIdRequest, GetOrderByIdResponse, DeleteOrderResponse, UpdateOrderRequest, UpdateOrderResponse, DeleteOrderRequest } from "@/apis/order.api";
+import {
+    CreateOrderRequest,
+    CreateOrderResponse,
+    DeleteOrderRequest,
+    DeleteOrderResponse,
+    GetOrderByIdRequest,
+    GetOrderByIdResponse,
+    GetOrdersRequest,
+    GetOrdersResponse,
+    UpdateOrderRequest,
+    UpdateOrderResponse,
+} from '../apis/order.api';
+import { ExpressHandler } from '@/types';
+import { PrismaClient } from '@prisma/client';
+import { Request, Response } from 'express';
 
-// Create Order
-export const createOrder: ExpressHandler<CreateOrderRequest, WithMessage<CreateOrderResponse>> = async (req, res) => {
-  try {
-    const { userId, address, items } = req.body;
+const prisma = new PrismaClient();
 
-    const total = items.reduce((acc, item) => acc + item.quantity * item.unitPrice, 0);
-
-    const order = await OrderDAO.create({ userId, address, total });
-
-    const createdItems = [];
-    for (const item of items) {
-      const orderItem = await OrderDAO.create({ userId, address, total }).then(() => {
-        return {
-          productId: item.productId,
-          quantity: item.quantity,
-          unitPrice: item.unitPrice,
-        };
-      });
-      createdItems.push(orderItem);
-    }
-
-    const response: WithMessage<CreateOrderResponse> = {
-      id: order.id,
-      userId: order.userId,
-      total: order.total,
-      status: order.status,
-      address: order.address,
-      createdAt: order.createdAt.toISOString(),
-      updatedAt: order.updatedAt.toISOString(),
-      items: createdItems,
-      message: "Order created successfully",
-    };
-
-    res.json(response);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Something went wrong" });
-  }
-};
-
-// Get All Orders
+// Get all orders
 export const getOrders: ExpressHandler<GetOrdersRequest, GetOrdersResponse> = async (_req, res) => {
-  try {
-    const orders = await OrderDAO.getAll();
-
-    const response: GetOrdersResponse = {
-      orders: orders.map(order => ({
-        id: order.id,
-        userId: order.userId,
-        total: order.total,
-        status: order.status,
-        address: order.address,
-        createdAt: order.createdAt.toISOString(),
-        updatedAt: order.updatedAt.toISOString(),
-        items: order.items.map(i => ({
-          productId: i.productId,
-          quantity: i.quantity,
-          unitPrice: i.unitPrice,
-        })),
-      })),
-    };
-
-    res.json(response);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ orders: [] });
-  }
+    try {
+        const orders = await prisma.order.findMany();
+        res.json(orders as unknown as GetOrdersResponse);
+    } catch (err) {
+        res.status(500).json({ message: 'Failed to fetch orders' });
+    }
 };
 
-// Get Order by ID
-export const getOrderById: ExpressHandler<GetOrderByIdRequest, GetOrderByIdResponse> = async (req, res) => {
-  try {
-    const { id } = req.params;
+// Create a new order
+export const createOrder: ExpressHandler<CreateOrderRequest, CreateOrderResponse> = async (
+    req,
+    res
+) => {
+    try {
+        const { userId, items, total, address } = req.body;
+        if (!userId || !items || !total || !address) {
+            return res.status(400).json({ message: 'Missing required fields' });
+        }
 
-    const order = await OrderDAO.getById(id);
-    if (!order) return res.status(404).json({ message: "Order not found" } as DeleteOrderResponse);
+        const newOrder = await prisma.order.create({
+            data: {
+                userId,
+                total,
+                address,
+                items: {
+                    create: items.map(item => ({
+                        productId: item.productId,
+                        quantity: item.quantity,
+                        unitPrice: item.unitPrice,
+                    })),
+                },
+            },
+            include: { items: true }, 
+        });
 
-    const response: GetOrderByIdResponse = {
-      id: order.id,
-      userId: order.userId,
-      total: order.total,
-      status: order.status,
-      address: order.address,
-      createdAt: order.createdAt.toISOString(),
-      updatedAt: order.updatedAt.toISOString(),
-      items: order.items.map(i => ({
-        productId: i.productId,
-        quantity: i.quantity,
-        unitPrice: i.unitPrice,
-      })),
-    };
-
-    res.json(response);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Something went wrong" } as DeleteOrderResponse);
-  }
+        res.status(201).json(newOrder);
+    } catch (err) {
+        console.error('Error creating order:', err);
+        res.status(500).json({ message: 'Failed to create order' });
+    }
 };
 
-// Update Order
-export const updateOrder: ExpressHandler<UpdateOrderRequest, WithMessage<UpdateOrderResponse>> = async (req, res) => {
-  try {
-    const { id, status } = req.body;
+// Get order by ID
+export const getOrderById: ExpressHandler<GetOrderByIdRequest, GetOrderByIdResponse> = async (
+    req,
+    res
+) => {
+        const id = req.body.id;
+    if (!id) return res.status(400).json({ message: 'Missing order id' });
 
-    const order = await OrderDAO.update(id, { status });
-    if (!order) return res.status(404).json({ message: "Order not found" });
+    try {
+        const order = await prisma.order.findUnique({ where: { id } });
+        if (!order) return res.status(404).json({ message: 'Order not found' });
 
-    const response: WithMessage<UpdateOrderResponse> = {
-      id: order.id,
-      userId: order.userId,
-      total: order.total,
-      status: order.status,
-      address: order.address,
-      createdAt: order.createdAt.toISOString(),
-      updatedAt: order.updatedAt.toISOString(),
-      items: order.items.map(i => ({
-        productId: i.productId,
-        quantity: i.quantity,
-        unitPrice: i.unitPrice,
-      })),
-      message: "Order updated successfully",
-    };
-
-    res.json(response);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Something went wrong" });
-  }
+        res.json(order as unknown as GetOrderByIdResponse);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Failed to fetch order' });
+    }
 };
 
-// Delete Order
-export const deleteOrder: ExpressHandler<DeleteOrderRequest, DeleteOrderResponse> = async (req, res) => {
-  try {
-    const { id } = req.params;
-    await OrderDAO.delete(id);
-    res.json({ message: "Order deleted successfully" });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Something went wrong" });
-  }
+// Update order
+export const updateOrder: ExpressHandler<UpdateOrderRequest, UpdateOrderResponse> = async (
+    req,
+    res
+) => {
+    const { status , id } = req.body;
+    if (!id) return res.status(400).json({ message: 'Missing order id' });
+
+    try {
+        const updatedOrder = await prisma.order.update({
+            where: { id },
+            data: { status } as any,
+        });
+
+        res.json(updatedOrder as unknown as UpdateOrderResponse);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Failed to update order' });
+    }
+};
+
+// Delete order
+export const deleteOrder: ExpressHandler<DeleteOrderRequest, DeleteOrderResponse> = async (
+    req,
+    res
+) => {
+    const id = req.body.id;
+    if (!id) return res.status(400).json({ message: 'Missing order id' });
+
+    try {
+        await prisma.order.delete({ where: { id } });
+        res.status(204).send();
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Failed to delete order' });
+    }
 };

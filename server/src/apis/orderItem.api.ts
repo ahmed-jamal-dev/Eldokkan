@@ -1,68 +1,71 @@
-export interface getOrderItemsRequest {}
-export type getOrderItemsResponse = {
-  message: string;
-  data: {
-    id: string;
-    orderId: string;
-    productId: string;
-    quantity: number;
-    price: number;
-    createdAt: Date;
-    updatedAt: Date;
-  }[];
+export interface GetOrderItemsRequest {}
+
+export type GetOrderItemsResponse = {
+    message: string;
+    data: {
+        id: string;
+        orderId: string;
+        productId: string;
+        quantity: number;
+        unitPrice:  number;
+    }[];
 };
-export interface createOrderItemRequest {
-  orderId: string | undefined;
-  productId: string | undefined;
-  quantity: number | undefined;
-  price: number | undefined;
+
+export interface CreateOrderItemRequest {
+    orderId: string;
+    productId: string;
+    quantity: number;
+    unitPrice: number;
 }
-export interface createOrderItemResponse {
-  message: string;
-  data: {
+
+export interface CreateOrderItemResponse {
+    message: string;
+    data: {
+        id: string;
+        orderId: string;
+        productId: string;
+        quantity: number;
+        unitPrice: number;
+    };
+}
+
+export interface GetOrderItemByIdRequest {
+    id: string;
+}
+
+export interface GetOrderItemByIdResponse {
     id: string;
     orderId: string;
     productId: string;
     quantity: number;
-    price: number;
+    unitPrice: number;
     createdAt: Date;
     updatedAt: Date;
-  };
 }
-export interface getOrderItemByIdRequest {
-  id: string;
-}
-export interface getOrderItemByIdResponse {
-  id: string;
-  orderId: string;
-  productId: string;
-  quantity: number;
-  price: number;
-  createdAt: Date;
-  updatedAt: Date;
-}
-export interface updateOrderItemRequest {
-  id: string;
-  orderId?: string;
-  productId?: string;
-  quantity?: number;
-  price?: number;
-}
-export interface updateOrderItemResponse {
-  message: string;
-  data: {
+
+export interface UpdateOrderItemRequest {
     id: string;
-    orderId: string;
-    productId: string;
-    quantity: number;
-    price: number;
-    createdAt: Date;
-    updatedAt: Date;
-  };
+    orderId?: string;
+    productId?: string;
+    quantity?: number;
+    unitPrice?: number;
 }
-export interface deleteOrderItemRequest {
-  id: string;
+
+export interface UpdateOrderItemResponse {
+    message: string;
+    data: {
+        id: string;
+        orderId: string;
+        productId: string;
+        quantity: number;
+        unitPrice: number;
+    };
 }
-export interface deleteOrderItemResponse {
-  message: string;
+
+export interface DeleteOrderItemRequest {
+    id: string;
+}
+
+export interface DeleteOrderItemResponse {
+    message: string;
 }

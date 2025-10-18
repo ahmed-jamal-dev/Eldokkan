@@ -1,22 +1,28 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 export const CategoryDAO = {
-  create: (data: { name: string; slug: string }) =>
-    prisma.category.create({ data }),
+    create: (data: { name: string; slug: string }): Promise<any> => {
+        return prisma.category.create({ data });
+    },
 
-  getById: (id: string) =>
-    prisma.category.findUnique({ where: { id } }),
+    getById: (id: string): Promise<any | null> => {
+        return prisma.category.findUnique({ where: { id } });
+    },
 
-  getBySlug: (slug: string) =>
-    prisma.category.findUnique({ where: { slug } }),
+    getBySlug: (slug: string): Promise<any | null> => {
+        return prisma.category.findUnique({ where: { slug } });
+    },
 
-  update: (id: string, data: Partial<{ name: string; slug: string }>) =>
-    prisma.category.update({ where: { id }, data }),
+    update: (id: string, data: Partial<{ name: string; slug: string }>): Promise<any> => {
+        return prisma.category.update({ where: { id }, data });
+    },
 
-  delete: (id: string) =>
-    prisma.category.delete({ where: { id } }),
+    delete: (id: string): Promise<any> => {
+        return prisma.category.delete({ where: { id } });
+    },
 
-  getAll: () =>
-    prisma.category.findMany(),
+    getAll: (): Promise<any[]> => {
+        return prisma.category.findMany();
+    },
 };
