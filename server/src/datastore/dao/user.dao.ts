@@ -1,51 +1,37 @@
 import { PrismaClient, Role } from '@prisma/client';
-import {User} from '../../types/user'
-import { prisma } from '../index';
 
-export interface IUserDAO {
-  create(data: {
-    name: string;
-    email: string;
-    password: string;
-    role?: Role;
-  }): Promise<any>;
+const prisma = new PrismaClient();
 
-  getById(id: string): Promise<any | null>;
+export const UserDAO = {
+    create: (data: {
+        name: string;
+        email: string;
+        password: string;
+        role?: Role;
+    }): Promise<any> => {
+        return prisma.user.create({ data });
+    },
 
-  getByEmail(email: string): Promise<any | null>;
+    getById: (id: string): Promise<any | null> => {
+        return prisma.user.findUnique({ where: { id } });
+    },
 
-  update(
-    id: string,
-    data: Partial<{ name: string; email: string; password: string; role: Role }>
-  ): Promise<any>;
+    getByEmail: (email: string): Promise<any | null> => {
+        return prisma.user.findUnique({ where: { email } });
+    },
 
-  delete(id: string): Promise<any>;
+    update: (
+        id: string,
+        data: Partial<{ name: string; email: string; password: string; role: Role }>
+    ): Promise<any> => {
+        return prisma.user.update({ where: { id }, data });
+    },
 
-  getAll(): Promise<any[]>;
-}
+    delete: (id: string): Promise<any> => {
+        return prisma.user.delete({ where: { id } });
+    },
 
-export const UserDAO: IUserDAO = {
-  async create(data) {
-    return prisma.user.create({ data });
-  },
-
-  async getById(id) {
-    return prisma.user.findUnique({ where: { id } });
-  },
-
-  async getByEmail(email) {
-    return prisma.user.findUnique({ where: { email } });
-  },
-
-  async update(id, data) {
-    return prisma.user.update({ where: { id }, data });
-  },
-
-  async delete(id) {
-    return prisma.user.delete({ where: { id } });
-  },
-
-  async getAll() {
-    return prisma.user.findMany();
-  },
+    getAll: (): Promise<any[]> => {
+        return prisma.user.findMany();
+    },
 };

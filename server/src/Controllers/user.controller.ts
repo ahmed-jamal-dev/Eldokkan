@@ -17,7 +17,6 @@ import { prisma } from '../datastore';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
-
 const JWT_SECRET = process.env.JWT_SECRET;
 if (!JWT_SECRET) {
     console.error('❌ Missing JWT_SECRET in environment variables');
@@ -27,27 +26,41 @@ if (!JWT_SECRET) {
 //  Get All Users
 export const getUsers: ExpressHandler<getUsersRequest, getUsersResponse> = async (req, res) => {
     try {
-        const users = await prisma.user.findMany();
-        res.json({
+        const users = await prisma.user.findMany({
+            select: {
+                id: true,
+                name: true,
+                email: true,
+                role: true,
+                createdAt: true,
+                updatedAt: true,
+            },
+        });
+
+        res.status(200).json({
             message: 'Users fetched successfully',
-            data: [],
+            data: users,
         });
     } catch (err) {
-        res.status(500).json({ message: 'Failed to fetch users' });
+        console.error('Error fetching users:', err);
+        res.status(500).json({ message: 'Failed to fetch users', data: [] });
     }
 };
 
-//  Register User
-export const createUser: ExpressHandler<createUserRequest, createUserResponse> = async (
-    req,
-    res
-) => {
+// Register User
+export const createUser: ExpressHandler<createUserRequest, createUserResponse> = async (req, res) => {
     const { name, email, password } = req.body;
 
-    if (!name || !email || !password)
-        return res.status(400).json({ message: 'Missing required fields: name, email, password' }); 
-    
+    if (!name || !email || !password) {
+        return res.status(400).json({ message: 'Missing required fields: name, email, password' });
+    }
+
     try {
+        const existing = await prisma.user.findUnique({ where: { email } });
+        if (existing) {
+            return res.status(400).json({ message: 'Email already registered' });
+        }
+
         const passwordHash = await bcrypt.hash(password, 10);
         const user = await prisma.user.create({
             data: { name, email, password: passwordHash },
@@ -65,11 +78,12 @@ export const createUser: ExpressHandler<createUserRequest, createUserResponse> =
             },
         });
     } catch (err) {
+        console.error('Create user error:', err);
         res.status(500).json({ message: 'Failed to create user' });
     }
 };
 
-//  Login User
+// Login User
 export const loginUser: ExpressHandler<loginUserRequest, loginUserResponse> = async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -102,51 +116,72 @@ export const loginUser: ExpressHandler<loginUserRequest, loginUserResponse> = as
     }
 };
 
-//  Get User by ID
-export const getUserById: ExpressHandler<getUserByIdRequest, getUserByIdResponse> = async (
-    req,
-    res
-) => {
-    const id = req.body.id;
+// Get User by ID
+export const getUserById: ExpressHandler<getUserByIdRequest, getUserByIdResponse> = async (req, res) => {
+    const { id } = req.body;
     try {
-        const user = await prisma.user.findUnique({ where: { id } });
-        if (user) res.json(user);
-        else res.status(404).json({ message: 'User not found' });
-    } catch {
+        const user = await prisma.user.findUnique({
+            where: { id },
+            select: {
+                id: true,
+                name: true,
+                email: true,
+                role: true,
+                createdAt: true,
+                updatedAt: true,
+            },
+        });
+
+        if (!user) return res.status(404).json({ message: 'User not found' });
+        res.json(user);
+    } catch (err) {
+        console.error('Get user by ID error:', err);
         res.status(500).json({ message: 'Failed to fetch user' });
     }
 };
 
 //  Update User
-export const updateUser: ExpressHandler<updateUserRequest, updateUserResponse> = async (
-    req,
-    res
-) => {
-    const { id, name, email, password } = req.body;
+export const updateUser: ExpressHandler<updateUserRequest, updateUserResponse> = async (req, res) => {
+    const { id, name, email, password, role } = req.body;
+
     try {
+        const updateData: any = { name, email, role };
+        if (password) updateData.password = await bcrypt.hash(password, 10);
+
         const updatedUser = await prisma.user.update({
             where: { id },
-            data: { name, email, password: password },
+            data: updateData,
+            select: {
+                id: true,
+                name: true,
+                email: true,
+                role: true,
+                createdAt: true,
+                updatedAt: true,
+            },
         });
+
         res.json({
             message: 'User updated successfully',
             data: updatedUser,
         });
-    } catch {
+    } catch (err) {
+        console.error('Update user error:', err);
         res.status(500).json({ message: 'Failed to update user' });
     }
 };
 
 //  Delete User
-export const deleteUser: ExpressHandler<deleteUserRequest, deleteUserResponse> = async (
-    req,
-    res
-) => {
+export const deleteUser: ExpressHandler<deleteUserRequest, deleteUserResponse> = async (req, res) => {
     const { id } = req.body;
     try {
+        const user = await prisma.user.findUnique({ where: { id } });
+        if (!user) return res.status(404).json({ message: 'User not found' });
+
         await prisma.user.delete({ where: { id } });
         res.json({ message: 'User deleted successfully' });
-    } catch {
+    } catch (err) {
+        console.error('Delete user error:', err);
         res.status(500).json({ message: 'Failed to delete user' });
     }
 };

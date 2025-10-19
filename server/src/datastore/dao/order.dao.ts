@@ -1,5 +1,5 @@
-import { OrderStatus } from '@prisma/client';
-import { prisma } from '../index';
+import { PrismaClient, OrderStatus, OrderItem } from '@prisma/client';
+const prisma = new PrismaClient();
 
 export const OrderDAO = {
     create: (data: {

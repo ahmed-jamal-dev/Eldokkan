@@ -5,7 +5,7 @@ import { OrderItem } from './orderItem';
 export interface Product {
   id: string;
   title: string;
-  description?: string;
+  description?: string | null;
   price: number;
   createdAt: Date;
   updatedAt: Date;

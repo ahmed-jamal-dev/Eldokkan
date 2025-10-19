@@ -1,92 +1,64 @@
-import { Role } from '../types';
+import { Role } from '@prisma/client';
+import { User } from '../types/user';
+
+// Get All Users
 export interface getUsersRequest {}
 
-export type getUsersResponse = {
-    message: string;
-    data: {
-        id: string;
-        name: string;
-        email: string;
-        password: string;
-        role: Role;
-        createdAt: Date;
-        updatedAt: Date;
-    }[];
-};
+export interface getUsersResponse {
+  message: string;
+  data: Omit<User, 'password'>[];
+}
 
+//  Create User
 export interface createUserRequest {
-    name: string | undefined;
-    email: string | undefined;
-    password: string;
+  name: string;
+  email: string;
+  password: string;
 }
 
 export interface createUserResponse {
-    message: string;
-    data: {
-        id: string;
-        name: string;
-        email: string;
-        role: Role;
-        createdAt: Date;
-        updatedAt: Date;
-    };
+  message: string;
+  data: Omit<User, 'password'>;
 }
 
+//  Get User by ID
 export interface getUserByIdRequest {
-    id: string;
+  id: string;
 }
 
-export interface getUserByIdResponse {
-    id: string;
-    name: string;
-    email: string;
-    password: string;
-    role: Role;
-    createdAt: Date;
-    updatedAt: Date;
-}
+export interface getUserByIdResponse extends Omit<User, 'password'> {}
 
+//  Update User
 export interface updateUserRequest {
-    id: string;
-    name?: string;
-    email?: string;
-    password?: string;
-    role?: Role;
+  id: string;
+  name?: string;
+  email?: string;
+  password?: string;
+  role?: Role;
 }
 
 export interface updateUserResponse {
-    message: string;
-    data: {
-        id: string;
-        name: string;
-        email: string;
-        password: string;
-        role: Role;
-        createdAt: Date;
-        updatedAt: Date;
-    };
+  message: string;
+  data: Omit<User, 'password'>;
 }
 
+//  Delete User
 export interface deleteUserRequest {
-    id: string;
+  id: string;
 }
 
 export interface deleteUserResponse {
-    message: string;
+  message: string;
 }
 
+//  Login
 export interface loginUserRequest {
-    email: string;
-    password: string;
+  email: string;
+  password: string;
 }
 
 export interface loginUserResponse {
-    message: string;
-    token?: string;
-    user?: {
-        id: string;
-        name: string;
-        email: string;
-        role: Role;
-    };
+  message: string;
+  token?: string;
+  user?: Omit<User, 'password' | 'createdAt' | 'updatedAt' | 'products' | 'orders'>;
 }
