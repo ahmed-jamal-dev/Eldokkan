@@ -1,6 +1,4 @@
-import { PrismaClient } from '@prisma/client';
-const prisma = new PrismaClient();
-
+import { prisma } from '../index';
 export const CategoryDAO = {
     create: (data: { name: string; slug: string }): Promise<any> => {
         return prisma.category.create({ data });

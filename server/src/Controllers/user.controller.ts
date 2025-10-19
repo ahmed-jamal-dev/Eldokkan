@@ -13,11 +13,10 @@ import {
     updateUserResponse,
 } from '../apis/user.api';
 import { ExpressHandler } from '@/types';
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '../datastore';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
-const prisma = new PrismaClient();
 
 const JWT_SECRET = process.env.JWT_SECRET;
 if (!JWT_SECRET) {

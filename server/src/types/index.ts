@@ -15,3 +15,4 @@ export interface JwtObject {
     role?: Role;
 }
 export type Role = PrismaRole;
+

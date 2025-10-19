@@ -13,7 +13,7 @@ import {
     DeleteOrderItemResponse,
 } from "../apis/orderItem.api"
 
-const prisma = new PrismaClient();
+import { prisma } from '../datastore';
 
 export const getOrderItems: ExpressHandler<GetOrderItemsRequest, GetOrderItemsResponse> = async (
     _req,

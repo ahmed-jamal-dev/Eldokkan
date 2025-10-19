@@ -11,9 +11,8 @@ import {
     updateProductResponse,
 } from '../apis/product.api';
 import { ExpressHandler } from '@/types';
-import { PrismaClient } from '@prisma/client';
 
-const prisma = new PrismaClient();
+import { prisma } from '../datastore';
 
 export const getProducts: ExpressHandler<getProductsRequest, getProductsResponse> = async (
     req,
