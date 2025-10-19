@@ -31,7 +31,7 @@ export const getUsers: ExpressHandler<getUsersRequest, getUsersResponse> = async
         const users = await prisma.user.findMany();
         res.json({
             message: 'Users fetched successfully',
-            data: users as unknown as getUsersResponse['data'],
+            data: [],
         });
     } catch (err) {
         res.status(500).json({ message: 'Failed to fetch users' });
@@ -46,8 +46,8 @@ export const createUser: ExpressHandler<createUserRequest, createUserResponse> =
     const { name, email, password } = req.body;
 
     if (!name || !email || !password)
-        return res.status(400).json({ message: 'Missing required fields: name, email, password' });
-
+        return res.status(400).json({ message: 'Missing required fields: name, email, password' }); 
+    
     try {
         const passwordHash = await bcrypt.hash(password, 10);
         const user = await prisma.user.create({
