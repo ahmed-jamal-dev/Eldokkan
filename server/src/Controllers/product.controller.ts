@@ -13,6 +13,7 @@ import {
 import { ExpressHandler } from '@/types';
 import { prisma } from '../types';
 import { Product } from '../types/product';
+import { getCategoryById } from './category.controller';
 
 
 export const getProducts: ExpressHandler<getProductsRequest, getProductsResponse> = async (
@@ -59,7 +60,7 @@ export const createProduct: ExpressHandler<createProductRequest, createProductRe
                 user: { connect: { id: userId } },
                 ...(categoryId && {
                     category: {
-                        connect: { id: categoryId },
+                        connect: { id: categoryId},
                     },
                 }),
             },
