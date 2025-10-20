@@ -12,6 +12,7 @@ export interface createProductRequest {
   description?: string | null;
   price: number;
   userId: string;
+  category:string;
   categoryId:string;
 }
 

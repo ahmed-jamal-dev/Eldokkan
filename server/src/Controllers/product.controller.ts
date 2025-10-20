@@ -11,7 +11,7 @@ import {
     updateProductResponse,
 } from '../apis/product.api';
 import { ExpressHandler } from '@/types';
-import { prisma } from '../datastore';
+import { prisma } from '../types';
 import { Product } from '../types/product';
 
 
@@ -43,14 +43,11 @@ export const getProducts: ExpressHandler<getProductsRequest, getProductsResponse
 };
 
 
-export const createProduct: ExpressHandler<createProductRequest, createProductResponse> = async (
-    req,
-    res
-) => {
+export const createProduct: ExpressHandler<createProductRequest, createProductResponse> = async (req, res) => {
     try {
         const { title, description, price, userId, categoryId } = req.body;
 
-        if (!title || !price || !userId) {
+        if (!title || !price || !userId ) {
             return res.status(400).json({ message: 'Missing required fields' });
         }
 
@@ -59,8 +56,12 @@ export const createProduct: ExpressHandler<createProductRequest, createProductRe
                 title,
                 description,
                 price,
-                userId,
-                categoryId,
+                user: { connect: { id: userId } },
+                ...(categoryId && {
+                    category: {
+                        connect: { id: categoryId },
+                    },
+                }),
             },
             include: {
                 category: true,
@@ -72,7 +73,7 @@ export const createProduct: ExpressHandler<createProductRequest, createProductRe
 
         res.status(201).json({
             message: 'Product created successfully',
-            data: newProduct as unknown as Product,
+            data: newProduct as Product,
         });
     } catch (err) {
         console.error('Error creating product:', err);

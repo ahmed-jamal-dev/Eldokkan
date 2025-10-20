@@ -11,7 +11,7 @@ import {
     UpdateOrderResponse,
 } from '../apis/order.api';
 import { ExpressHandler } from '@/types';
-import { prisma } from '../datastore';
+import { prisma } from '../types';
 
 // Get all orders
 export const getOrders: ExpressHandler<GetOrdersRequest, GetOrdersResponse> = async (_req, res) => {

@@ -13,7 +13,7 @@ import {
     updateUserResponse,
 } from '../apis/user.api';
 import { ExpressHandler } from '@/types';
-import { prisma } from '../datastore';
+import { prisma } from '../types/index';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 

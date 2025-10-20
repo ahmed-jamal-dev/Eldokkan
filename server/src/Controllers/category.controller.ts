@@ -11,7 +11,7 @@ import {
     getCategoriesResponse,
 } from '../apis/category.api';
 import { ExpressHandler } from '../types';
-import { prisma } from '../datastore';
+import { prisma } from '../types/index';
 
 
 export const createCategory: ExpressHandler<createCategoryRequest, createCategoryResponse> = async (

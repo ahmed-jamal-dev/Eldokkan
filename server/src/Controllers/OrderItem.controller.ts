@@ -1,4 +1,3 @@
-import { PrismaClient } from '@prisma/client';
 import { ExpressHandler } from '@/types';
 import {
     GetOrderItemsRequest,
@@ -13,7 +12,7 @@ import {
     DeleteOrderItemResponse,
 } from "../apis/orderItem.api"
 
-import { prisma } from '../datastore';
+import { prisma } from '../types/index';
 
 export const getOrderItems: ExpressHandler<GetOrderItemsRequest, GetOrderItemsResponse> = async (
     _req,

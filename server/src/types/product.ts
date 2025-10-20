@@ -9,8 +9,8 @@ export interface Product {
   price: number;
   createdAt: Date;
   updatedAt: Date;
-  category?: Category | null;
-  categoryId?: string | null;
+  category?: Category ;
+  categoryId?: string ;
   user: User;
   userId: string;
   orderItems?: OrderItem[];
