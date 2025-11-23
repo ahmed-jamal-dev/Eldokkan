@@ -1,7 +1,6 @@
-import { Role as PrismaRole ,PrismaClient} from '@prisma/client';
+import { Role as PrismaRole, PrismaClient } from '@prisma/client';
 import { RequestHandler } from 'express';
 export const prisma = new PrismaClient();
-
 
 export type WithMessage<T> = T & { message: string };
 
@@ -17,4 +16,3 @@ export interface JwtObject {
     role?: Role;
 }
 export type Role = PrismaRole;
-

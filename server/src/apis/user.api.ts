@@ -5,60 +5,61 @@ import { User } from '../types/user';
 export interface getUsersRequest {}
 
 export interface getUsersResponse {
-  message: string;
-  data: Omit<User, 'password'>[];
+    message: string;
+    data: Omit<User, 'password'>[];
 }
 
 //  Create User
 export interface createUserRequest {
-  name: string;
-  email: string;
-  password: string;
+    name: string;
+    email: string;
+    password: string;
 }
 
 export interface createUserResponse {
-  message: string;
-  data: Omit<User, 'password'>;
+    message: string;
+    data: Omit<User, 'password'>;
 }
 
 //  Get User by ID
 export interface getUserByIdRequest {
-  id: string;
+    id: string;
 }
-
-export interface getUserByIdResponse extends Omit<User, 'password'> {}
+export interface getUserByIdResponse {
+    data: Omit<User, 'password'> | null;
+}
 
 //  Update User
 export interface updateUserRequest {
-  id: string;
-  name?: string;
-  email?: string;
-  password?: string;
-  role?: Role;
+    id: string;
+    name?: string;
+    email?: string;
+    password?: string;
+    role?: Role;
 }
 
 export interface updateUserResponse {
-  message: string;
-  data: Omit<User, 'password'>;
+    message: string;
+    data: Omit<User, 'password'>;
 }
 
 //  Delete User
 export interface deleteUserRequest {
-  id: string;
+    id: string;
 }
 
 export interface deleteUserResponse {
-  message: string;
+    message: string;
 }
 
 //  Login
 export interface loginUserRequest {
-  email: string;
-  password: string;
+    email: string;
+    password: string;
 }
 
 export interface loginUserResponse {
-  message: string;
-  token?: string;
-  user?: Omit<User, 'password' | 'createdAt' | 'updatedAt' | 'products' | 'orders'>;
+    message: string;
+    token?: string;
+    user?: Omit<User, 'password' | 'createdAt' | 'updatedAt' | 'products' | 'orders'>;
 }

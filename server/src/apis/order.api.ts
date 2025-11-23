@@ -1,10 +1,8 @@
-
-
 export interface CreateOrderRequest {
     userId: string;
     address: string;
     total: number;
-    items: CreateOrderItemInput[]; 
+    items: CreateOrderItemInput[];
 }
 
 export interface CreateOrderResponse {

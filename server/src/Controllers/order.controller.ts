@@ -47,7 +47,7 @@ export const createOrder: ExpressHandler<CreateOrderRequest, CreateOrderResponse
                     })),
                 },
             },
-            include: { items: true }, 
+            include: { items: true },
         });
 
         res.status(201).json(newOrder);
@@ -62,7 +62,7 @@ export const getOrderById: ExpressHandler<GetOrderByIdRequest, GetOrderByIdRespo
     req,
     res
 ) => {
-        const id = req.body.id;
+    const id = req.body.id;
     if (!id) return res.status(400).json({ message: 'Missing order id' });
 
     try {
@@ -81,7 +81,7 @@ export const updateOrder: ExpressHandler<UpdateOrderRequest, UpdateOrderResponse
     req,
     res
 ) => {
-    const { status , id } = req.body;
+    const { status, id } = req.body;
     if (!id) return res.status(400).json({ message: 'Missing order id' });
 
     try {

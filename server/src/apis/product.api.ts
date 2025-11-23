@@ -1,53 +1,55 @@
+
 import { Product } from '../types/product';
+
+// Requests & Responses
 
 export interface getProductsRequest {}
 
-export type getProductsResponse = {
-  message: string;
-  data: Product[]; 
-};
+export interface getProductsResponse {
+    message: string;
+    data: [];
+}
 
 export interface createProductRequest {
-  title: string;
-  description?: string | null;
-  price: number;
-  userId: string;
-  category:string;
-  categoryId:string;
+    title: string;
+    description?: string | null;
+    price: number;
+    userId: string;
+    categoryId?: string;
 }
 
 export interface createProductResponse {
-  message: string;
-  data: Product; 
+    message: string;
+    data: Product;
 }
 
 export interface getProductByIdRequest {
-  id: string;
+    id: string;
 }
 
 export interface getProductByIdResponse {
-  message: string;
-  data: Product | null;
+    message: string;
+    data: Product | null;
 }
 
 export interface updateProductRequest {
     id: string;
     title?: string;
-    description?: string;
+    description?: string | null;
     price?: number;
     userId?: string;
-    categoryId :string;
+    categoryId?: string;
 }
 
 export interface updateProductResponse {
-  message: string;
-  data: Product;
+    message: string;
+    data: Product;
 }
 
 export interface deleteProductRequest {
-  id: string;
+    id: string;
 }
 
 export interface deleteProductResponse {
-  message: string;
+    message: string;
 }

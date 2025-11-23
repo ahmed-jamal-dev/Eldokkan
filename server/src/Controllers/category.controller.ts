@@ -13,7 +13,6 @@ import {
 import { ExpressHandler } from '../types';
 import { prisma } from '../types/index';
 
-
 export const createCategory: ExpressHandler<createCategoryRequest, createCategoryResponse> = async (
     req,
     res

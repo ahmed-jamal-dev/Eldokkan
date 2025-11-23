@@ -13,10 +13,8 @@ import {
 import { ExpressHandler } from '@/types';
 import { prisma } from '../types';
 import { Product } from '../types/product';
-import { getCategoryById } from './category.controller';
 
-
-export const getProducts: ExpressHandler<getProductsRequest, getProductsResponse> = async (
+export const getProducts: ExpressHandler<getProductsRequest, getProductsResponse > = async (
     req,
     res
 ) => {
@@ -32,7 +30,6 @@ export const getProducts: ExpressHandler<getProductsRequest, getProductsResponse
 
         res.status(200).json({
             message: 'Products fetched successfully',
-            data: products as unknown as Product[],
         });
     } catch (err) {
         console.error('Error fetching products:', err);
@@ -43,12 +40,14 @@ export const getProducts: ExpressHandler<getProductsRequest, getProductsResponse
     }
 };
 
-
-export const createProduct: ExpressHandler<createProductRequest, createProductResponse> = async (req, res) => {
+export const createProduct: ExpressHandler<createProductRequest, createProductResponse> = async (
+    req,
+    res
+) => {
     try {
         const { title, description, price, userId, categoryId } = req.body;
 
-        if (!title || !price || !userId ) {
+        if (!title || !price || !userId) {
             return res.status(400).json({ message: 'Missing required fields' });
         }
 
@@ -60,7 +59,7 @@ export const createProduct: ExpressHandler<createProductRequest, createProductRe
                 user: { connect: { id: userId } },
                 ...(categoryId && {
                     category: {
-                        connect: { id: categoryId},
+                        connect: { id: categoryId },
                     },
                 }),
             },
@@ -74,14 +73,12 @@ export const createProduct: ExpressHandler<createProductRequest, createProductRe
 
         res.status(201).json({
             message: 'Product created successfully',
-            data: newProduct as Product,
         });
     } catch (err) {
         console.error('Error creating product:', err);
         res.status(500).json({ message: 'Failed to create product' });
     }
 };
-
 
 export const getProductById: ExpressHandler<getProductByIdRequest, getProductByIdResponse> = async (
     req,
@@ -113,7 +110,6 @@ export const getProductById: ExpressHandler<getProductByIdRequest, getProductByI
         res.status(500).json({ message: 'Failed to fetch product', data: null });
     }
 };
-
 
 export const updateProduct: ExpressHandler<updateProductRequest, updateProductResponse> = async (
     req,
@@ -159,7 +155,6 @@ export const updateProduct: ExpressHandler<updateProductRequest, updateProductRe
         });
     }
 };
-
 
 export const deleteProduct: ExpressHandler<deleteProductRequest, deleteProductResponse> = async (
     req,

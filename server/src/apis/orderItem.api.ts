@@ -7,7 +7,7 @@ export type GetOrderItemsResponse = {
         orderId: string;
         productId: string;
         quantity: number;
-        unitPrice:  number;
+        unitPrice: number;
     }[];
 };
 

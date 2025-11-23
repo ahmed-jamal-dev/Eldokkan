@@ -16,7 +16,6 @@ import { ExpressHandler } from '@/types';
 import { prisma } from '../types/index';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-
 const JWT_SECRET = process.env.JWT_SECRET;
 if (!JWT_SECRET) {
     console.error('❌ Missing JWT_SECRET in environment variables');
@@ -48,7 +47,10 @@ export const getUsers: ExpressHandler<getUsersRequest, getUsersResponse> = async
 };
 
 // Register User
-export const createUser: ExpressHandler<createUserRequest, createUserResponse> = async (req, res) => {
+export const createUser: ExpressHandler<createUserRequest, createUserResponse> = async (
+    req,
+    res
+) => {
     const { name, email, password } = req.body;
 
     if (!name || !email || !password) {
@@ -60,10 +62,14 @@ export const createUser: ExpressHandler<createUserRequest, createUserResponse> =
         if (existing) {
             return res.status(400).json({ message: 'Email already registered' });
         }
-
         const passwordHash = await bcrypt.hash(password, 10);
+
         const user = await prisma.user.create({
-            data: { name, email, password: passwordHash },
+            data: {
+                name,
+                email,
+                password: passwordHash,
+            },
         });
 
         res.status(201).json({
@@ -117,23 +123,25 @@ export const loginUser: ExpressHandler<loginUserRequest, loginUserResponse> = as
 };
 
 // Get User by ID
-export const getUserById: ExpressHandler<getUserByIdRequest, getUserByIdResponse> = async (req, res) => {
+export const getUserById: ExpressHandler<getUserByIdRequest, getUserByIdResponse> = async (
+    req,
+    res
+) => {
     const { id } = req.body;
     try {
         const user = await prisma.user.findUnique({
             where: { id },
-            select: {
-                id: true,
-                name: true,
-                email: true,
-                role: true,
-                createdAt: true,
-                updatedAt: true,
+            include: {
+                products: { include: { user: true } },
+                orders: { include: { user: true } },
             },
         });
 
         if (!user) return res.status(404).json({ message: 'User not found' });
-        res.json(user);
+        res.status(200).json({
+            message: 'User fetched successfully',
+            data: user,
+        });
     } catch (err) {
         console.error('Get user by ID error:', err);
         res.status(500).json({ message: 'Failed to fetch user' });
@@ -141,7 +149,10 @@ export const getUserById: ExpressHandler<getUserByIdRequest, getUserByIdResponse
 };
 
 //  Update User
-export const updateUser: ExpressHandler<updateUserRequest, updateUserResponse> = async (req, res) => {
+export const updateUser: ExpressHandler<updateUserRequest, updateUserResponse> = async (
+    req,
+    res
+) => {
     const { id, name, email, password, role } = req.body;
 
     try {
@@ -172,7 +183,10 @@ export const updateUser: ExpressHandler<updateUserRequest, updateUserResponse> =
 };
 
 //  Delete User
-export const deleteUser: ExpressHandler<deleteUserRequest, deleteUserResponse> = async (req, res) => {
+export const deleteUser: ExpressHandler<deleteUserRequest, deleteUserResponse> = async (
+    req,
+    res
+) => {
     const { id } = req.body;
     try {
         const user = await prisma.user.findUnique({ where: { id } });

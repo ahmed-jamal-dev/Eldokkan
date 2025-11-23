@@ -10,7 +10,7 @@ import {
     UpdateOrderItemResponse,
     DeleteOrderItemRequest,
     DeleteOrderItemResponse,
-} from "../apis/orderItem.api"
+} from '../apis/orderItem.api';
 
 import { prisma } from '../types/index';
 
